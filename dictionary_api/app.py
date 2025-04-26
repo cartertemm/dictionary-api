@@ -42,6 +42,7 @@ def word_lookup(word=None):
 
 @app.route("/api/word/plain")
 @app.route("/api/word/plain/<string:word>")
+@app.route("/w/<string:word>")
 def word_lookup_plain(word=None):
 	"""Looks up word data."""
 	word = word or request.args.get("word")
@@ -54,6 +55,7 @@ def word_lookup_plain(word=None):
 		pos_filter = [p.strip() for p in pos_str.split(',')]
 	try:
 		word_data = wd.get_word_data_plain(word, pos_filter=pos_filter)
+		print(word_data)
 		return word_data, 200
 	except Exception as e:
 		app.logger.error(f"Error processing word '{word}': {e}")
