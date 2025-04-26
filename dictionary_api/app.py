@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, render_template, request
 
-from dictionary_api import word_data as wd
+import word_data as wd
 
 
 app = Flask(__name__)
@@ -38,6 +38,26 @@ def word_lookup(word=None):
 	except Exception as e:
 		app.logger.error(f"Error processing word '{word}': {e}")
 		return jsonify({"data": None, "error": "An internal server error occurred"}), 500
+
+
+@app.route("/api/word/plain")
+@app.route("/api/word/plain/<string:word>")
+def word_lookup_plain(word=None):
+	"""Looks up word data."""
+	word = word or request.args.get("word")
+	pos_str = request.args.get("pos") # Part of speech filter (comma-separated)
+	if not word:
+		return "Missing 'word' query parameter", 400
+	pos_filter = None
+	if pos_str:
+		# Split by comma and remove any leading/trailing whitespace
+		pos_filter = [p.strip() for p in pos_str.split(',')]
+	try:
+		word_data = wd.get_word_data_plain(word, pos_filter=pos_filter)
+		return word_data, 200
+	except Exception as e:
+		app.logger.error(f"Error processing word '{word}': {e}")
+		return "An internal server error occurred", 500
 
 
 if __name__ == "__main__":
