@@ -6,9 +6,9 @@ A straightforward dictionary API and frontend web application that provides word
 
 ## Background
 
-> [WordNet®](https://wordnet.princeton.edu/) is a large lexical database of English. Nouns, verbs, adjectives and adverbs are grouped into sets of cognitive synonyms (synsets), each expressing a distinct concept.
+> [WordNet®](https://wordnet.princeton.edu/) is a large lexical database of English. Nouns, verbs, adjectives, and adverbs are grouped into sets of cognitive synonyms (synsets), each expressing a distinct concept.
 
-Princeton University hosted a web interface allowing us to get basic information about words from the dataset, until it was discontinued some time in 2024.
+Princeton University hosted a web interface allowing us to get basic information about words from the dataset, until it was discontinued sometime in 2024.
 
 Projects like [PyDictionary](https://github.com/geekpradd/PyDictionary) and my own [Text Information](https://github.com/cartertemm/text_information) relied on scraping this data for rapid lookups.
 
@@ -17,7 +17,8 @@ This is an attempt to provide that same data in a straightforward way that can b
 ## Features
 
 - Clean, minimalist interface
-- Light-weight accessibility first design with i.e. screen reader announcements
+- Interact with it from the command line, website, REST API, or python module
+- Lightweight, accessibility-first design with screen reader announcements
 - Comprehensive word lookups with commonly desired information
 - Results neatly organized by part of speech
 - Interactive related words - just click to explore further
@@ -30,12 +31,11 @@ This is an attempt to provide that same data in a straightforward way that can b
 
 ## Using the API
 
-### Curl
+### Web API
 
-Basic word lookup.
+Basic word lookup:
 
 For JSON:
-
 ```bash
 curl https://dictionary.ctemm.me/api/word/computer
 ```
@@ -46,24 +46,61 @@ curl https://dictionary.ctemm.me/api/word/plain/computer
 ```
 
 Or to save a little typing:
-
 ```bash
 curl https://dictionary.ctemm.me/w/computer
 ```
 
-### Python module
+### Command Line Interface
+
+The package includes a convenient command-line tool with various options:
+
+```bash
+# Basic usage (defaults to plain output)
+dict.py computer
+
+# Get definitions
+dict.py computer -D
+# or
+dict.py computer --definitions
+
+# Get synonyms
+dict.py computer -s
+# or
+dict.py computer --synonyms
+
+# Get antonyms
+dict.py computer -a
+# or
+dict.py computer --antonyms
+
+# Force JSON output for any function
+dict.py computer -s -j
+
+# Run in interactive mode
+dict.py -i
+# or
+dict.py --interactive
+
+# Display version
+dict.py --version
+
+# Show help and all available options
+dict.py --help
+```
+
+### Python Module
 
 ```python
 from dictionary_api.word_data import get_word_data, get_synonyms, get_antonyms
 
-
+# Get comprehensive word data
 data = get_word_data("computer")
 
 # Get just synonyms
 synonyms = get_synonyms("amazing")
 print(f"Synonyms for 'amazing': {', '.join(synonyms)}")
 
-# Get just antonyms with part of speech filter
+# Get antonyms
 antonyms = get_antonyms("slow")
 print(f"Antonyms for 'slow': {', '.join(antonyms)}")
 ```
@@ -74,19 +111,21 @@ print(f"Antonyms for 'slow': {', '.join(antonyms)}")
     ```bash
     git clone https://github.com/cartertemm/dictionary-api.git
     ```
-2. Spin up a virtual environment (optional), and install dependencies:
+
+2. Create a virtual environment (optional) and install dependencies:
     ```bash
     pip install -r requirements.txt
     ```
+
 3. Download required NLTK data:
     ```python
     import nltk
     nltk.download('wordnet')
-    # and/or nltk.download('omw-1.4')  #
-   ```
-4. either start the application using Flask, or import the module and run with it.
+    # For additional languages: nltk.download('omw-1.4')
+    ```
 
-A sample virtual host is included for running with Apache2 and mod_wsgi.
+4. Either start the application using Flask or import the module and use it directly.
+   A sample virtual host configuration is included for running with Apache2 and mod_wsgi.
 
 ## API Endpoints
 
@@ -95,7 +134,7 @@ A sample virtual host is included for running with Apache2 and mod_wsgi.
 - `GET /api/word?word=<word>` - Alternative query format
 - `GET /api/word?word=<word>&pos=<pos>` - Filter results by part of speech
 - `GET /api/word/plain/<word>` - Retrieve detailed word information as plain text
-- GET /w/<word>: Shorthand for `/api/word/plain/<word>`
+- `GET /w/<word>` - Shorthand for `/api/word/plain/<word>`
 
 ## How It Works
 
